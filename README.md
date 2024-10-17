@@ -1,7 +1,8 @@
-# StreamDSGN
+# StreamDSGN (NeurIPS2024)
 
 
-This is the official anonymous repository for the paper "Real-time Stereo-based 3D Object Detection for Streaming Perception".
+This is the official repository for the NeurIPS2024 poster paper "Real-time Stereo-based 3D Object Detection for Streaming Perception".
+[[Paper]](http://arxiv.org/abs/2410.12394) &nbsp;
 
 ### Model Framework
 
