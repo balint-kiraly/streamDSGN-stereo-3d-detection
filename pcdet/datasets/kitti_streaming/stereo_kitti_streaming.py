@@ -1,3 +1,4 @@
+import time
 import copy
 import json
 import pickle
@@ -860,4 +861,35 @@ class StereoKittiStreaming(StereoStreamingTemplate):
                 return self.__getitem__(new_index)
 
         data_dict = self.prepare_data(data_dict=input_dict)
+        return data_dict
+
+
+class StereoKittiStreamingInfer(StereoKittiStreaming):
+    def __init__(self, dataset_cfg, class_names, root_path=None, training=False, logger=None):
+        super().__init__(dataset_cfg, class_names, False, root_path, logger)
+
+    def include_kitti_data(self, mode):
+        pass
+
+    def __len__(self):
+        return 1
+
+    def __getitem__(self, index):
+        start_time = time.time_ns()
+        calib = self.get_calib(index)
+        calib_ori = copy.deepcopy(calib)
+        left_img = self.get_image(index, 2)
+        right_img = self.get_image(index, 3)
+
+        input_dict = {
+            'frame_id': index,
+            'calib': calib,
+            'calib_ori': calib_ori,
+            'left_img': left_img,
+            'right_img': right_img,
+            'image_shape': left_img.shape
+        }
+        data_dict = input_dict
+        print(f'load data: {(time.time_ns() - start_time) / 10 ** 9}')
+        # data_dict = self.prepare_data(data_dict=input_dict)
         return data_dict

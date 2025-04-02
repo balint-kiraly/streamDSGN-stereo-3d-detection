@@ -6,7 +6,7 @@ from .kitti.lidar_kitti_dataset import LiDARKittiDataset
 from .kitti.stereo_kitti_dataset import StereoKittiDataset
 from .kitti.mono_kitti_dataset import MonoKittiDataset
 from .kitti_streaming.lidar_kitti_streaming import LiDARKittiStreaming
-from .kitti_streaming.stereo_kitti_streaming import StereoKittiStreaming
+from .kitti_streaming.stereo_kitti_streaming import StereoKittiStreaming, StereoKittiStreamingInfer
 from pcdet.utils import common_utils
 
 __all__ = {
@@ -14,7 +14,8 @@ __all__ = {
     'StereoKittiDataset': StereoKittiDataset,
     'MonoKittiDataset': MonoKittiDataset,
     'LiDARKittiStreaming': LiDARKittiStreaming,
-    'StereoKittiStreaming': StereoKittiStreaming
+    'StereoKittiStreaming': StereoKittiStreaming,
+    'StereoKittiStreamingInfer': StereoKittiStreamingInfer,
 }
 
 
