@@ -875,21 +875,42 @@ class StereoKittiStreamingInfer(StereoKittiStreaming):
         return 1
 
     def __getitem__(self, index):
-        start_time = time.time_ns()
-        calib = self.get_calib(index)
+        scene = 0
+
+        # load calib
+        calib = self.get_calib(scene)
         calib_ori = copy.deepcopy(calib)
-        left_img = self.get_image(index, 2)
-        right_img = self.get_image(index, 3)
+
+        # load images
+        left_img = self.get_image(scene, index, 2)
+        right_img = self.get_image(scene, index, 3)
 
         input_dict = {
-            'frame_id': index,
+            'scene': scene,
+            'this_sample_idx': index,
             'calib': calib,
             'calib_ori': calib_ori,
             'left_img': left_img,
             'right_img': right_img,
             'image_shape': left_img.shape
         }
-        data_dict = input_dict
-        print(f'load data: {(time.time_ns() - start_time) / 10 ** 9}')
-        # data_dict = self.prepare_data(data_dict=input_dict)
+
+        data_dict = { 'token': {
+                        'frame_valid': True,
+                        'input_date': input_dict,
+                        'gt_info': {
+                            'gt_valid': False,
+                            'gt_names': np.array([], dtype=str),
+                            'gt_boxes': np.array([], dtype=float).reshape(-1, 7),
+                            'gt_annots_boxes_2d': np.array([], dtype=float).reshape(-1, 4),
+                            'gt_truncated': np.array([], dtype=float).reshape(-1),
+                            'gt_occluded': np.array([], dtype=float).reshape(-1),
+                            'gt_difficulty': np.array([], dtype=np.int32).reshape(-1),
+                            'gt_index': np.array([], dtype=np.int32).reshape(-1),
+                            'gt_boxes_mask':  np.array([], dtype=np.bool_),
+                            'object_id': np.array([], dtype=str),
+                        }
+                    }
+        }
+        # data_dict = self.prepare_data(data_dict=data_dict)
         return data_dict
