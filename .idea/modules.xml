@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/streamDSGN-pytorch.iml" filepath="$PROJECT_DIR$/.idea/streamDSGN-pytorch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/streamDSGN-stereo-3d-detection.iml" filepath="$PROJECT_DIR$/.idea/streamDSGN-stereo-3d-detection.iml" />
     </modules>
   </component>
 </project>
