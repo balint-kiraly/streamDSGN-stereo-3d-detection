@@ -8,8 +8,6 @@ PREPARE_PATH: 'frame_stride_1-len_frames_40-token'
 FLIP: True
 FORCE_FLIP: False
 
-INFER_TIME_PATH: "infer_time.txt"
-
 # in lidar view
 POINT_CLOUD_RANGE: [2, -30.4, -3, 59.6, 30.4, 1]
 VOXEL_SIZE: [0.05, 0.05, 0.1] # [0.2, 0.2, 0.2]
@@ -39,14 +37,14 @@ TRAIN_DATA_AUGMENTOR:
     AREA_2D_RATIO_THRESH: null
     GT_TRUNCATED_THRESH: 0.98
 
-#TEST_DATA_AUGMENTOR:
-#  - NAME: random_crop
-#    MIN_REL_X: 0
-#    MAX_REL_X: 0
-#    MIN_REL_Y: 1.0
-#    MAX_REL_Y: 1.0
-#    MAX_CROP_H: 320
-#    MAX_CROP_W: 1248 # min(MAX_CROP_W, old_w)
+TEST_DATA_AUGMENTOR:
+  - NAME: random_crop
+    MIN_REL_X: 0
+    MAX_REL_X: 0
+    MIN_REL_Y: 1.0
+    MAX_REL_Y: 1.0
+    MAX_CROP_H: 320
+    MAX_CROP_W: 1248 # min(MAX_CROP_W, old_w)
 
 POINT_FEATURE_ENCODING:
   {

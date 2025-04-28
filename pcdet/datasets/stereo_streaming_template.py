@@ -406,9 +406,10 @@ class StereoStreamingTemplate(torch_data.Dataset):
 
         data_list = [(k, v) for k, v in data_dict.items()]
 
-        with futures.ThreadPoolExecutor(4) as executor:
-            infos = executor.map(process_single_frame, data_list)
-        re_infos = list(infos)
+        # with futures.ThreadPoolExecutor(4) as executor:
+        #     infos = executor.map(process_single_frame, data_list)
+        # re_infos = list(infos)
+        re_infos = list(map(process_single_frame, data_list))
 
         ret_dict = {x[0]: x[1] for x in re_infos}
         return ret_dict
