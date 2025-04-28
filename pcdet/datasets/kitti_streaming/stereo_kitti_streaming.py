@@ -1,3 +1,4 @@
+import time
 import copy
 import json
 import pickle
@@ -860,4 +861,61 @@ class StereoKittiStreaming(StereoStreamingTemplate):
                 return self.__getitem__(new_index)
 
         data_dict = self.prepare_data(data_dict=input_dict)
+        return data_dict
+
+
+class StereoKittiStreamingInfer(StereoKittiStreaming):
+    def __init__(self, dataset_cfg, class_names, root_path=None, training=False, logger=None):
+        super().__init__(dataset_cfg, class_names, False, root_path, logger)
+
+    def include_kitti_data(self, mode):
+        pass
+
+    def __len__(self):
+        return 1
+
+    def __getitem__(self, index):
+        scene = '0'
+
+        # load calib
+        calib = self.get_calib(scene)
+        calib_ori = copy.deepcopy(calib)
+
+        # load images
+        left_img = self.get_image(scene, index, 2)
+        right_img = self.get_image(scene, index, 3)
+
+        input_dict = {
+            'scene': scene,
+            'this_sample_idx': str(index),
+            'calib': calib,
+            'calib_ori': calib_ori,
+            'left_img': left_img,
+            'right_img': right_img,
+            'image_shape': left_img.shape,
+            'road_plane': None,
+            #'points': None,
+            'prev_sample_idx': '',
+            'prev2_sample_idx': '',
+            'next_sample_idx': '',
+        }
+
+        data_dict = { 'token': {
+                        'frame_valid': True,
+                        'input_data': input_dict,
+                        'gt_info': {
+                            'gt_valid': False,
+                            'gt_names': np.array([], dtype=str),
+                            'gt_boxes': np.array([], dtype=float).reshape(-1, 7),
+                            'gt_annots_boxes_2d': np.array([], dtype=float).reshape(-1, 4),
+                            'gt_truncated': np.array([], dtype=float).reshape(-1),
+                            'gt_occluded': np.array([], dtype=float).reshape(-1),
+                            'gt_difficulty': np.array([], dtype=np.int32).reshape(-1),
+                            'gt_index': np.array([], dtype=np.int32).reshape(-1),
+                            'gt_boxes_mask':  np.array([], dtype=np.bool_),
+                            'object_id': np.array([], dtype=str),
+                        }
+                    }
+        }
+        # data_dict = self.prepare_data(data_dict=data_dict)
         return data_dict

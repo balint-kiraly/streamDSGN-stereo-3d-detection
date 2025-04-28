@@ -6,6 +6,7 @@ __pycache__
 *.egg-info
 pcdet/version.py
 outputs/
+output/
 build/
 data/
 debug/
