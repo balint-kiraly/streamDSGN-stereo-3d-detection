@@ -61,8 +61,24 @@ def infer(model, data_dict):
         pred_dicts[0]['pred_boxes'].cpu().numpy(), calib
     )
 
-    return pred_boxes_cam
+    class_names = cfg.CLASS_NAMES
+    pred_scores = pred_dicts[0]['pred_scores'].cpu().numpy()
+    pred_labels = pred_dicts[0]['pred_labels'].cpu().numpy()
 
+    result = []
+    for box, score, label in zip(pred_boxes_cam, pred_scores, pred_labels):
+        result.append({
+            "object_type": class_names[label - 1],
+            "location": box[0:3].tolist(),  # x, y, z
+            "dimensions": box[3:6].tolist(),  # h, w, l
+            "rotation_y": float(box[6]),
+            "score": float(score)
+        })
+
+    return {
+        "objects": result,
+        "boxes": pred_boxes_cam.tolist()
+        }
 
 def visualize_boxes(image_path, pred_boxes, calib, save_path='output/infer/result.png'):
     """
@@ -156,7 +172,7 @@ async def predict(
         calib (UploadFile): Calibration file.
 
     Returns:
-        dict: Bounding boxes predicted by the model.
+        prediction: JSON object containing detected objects and their bounding boxes.
     """
     try:
         global model, test_loader
@@ -190,12 +206,12 @@ async def predict(
         # Inference timing
         inference_start_time = time.time()
 
-        pred_boxes = infer(model, data_dict)
+        prediction = infer(model, data_dict)
 
         inference_duration = time.time() - inference_start_time
         print(f"Inference time: {inference_duration:.3f} seconds")
 
-        return {"bounding_boxes": pred_boxes.tolist()}
+        return { "objects": prediction['objects'], "boxes": prediction['boxes'] }
     except Exception as e:
         print(f"Error during inference: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -207,13 +223,13 @@ if __name__ == "__main__":
     data_dict = test_set[0]
     data_dict = test_set.collate_batch([data_dict])
 
-    pred_boxes = infer(model, data_dict)
+    prediction = infer(model, data_dict)
 
     visualize_boxes(
         str(UPLOAD_FOLDER / "image_02/0/0.png"),
-        pred_boxes,
+        prediction['boxes'],
         data_dict['token']['calib'][0],
         save_path='output/infer/result.png'
     )
 
-    print(f"Bounding boxes detected: {len(pred_boxes)}")
+    print(f"Objects detected: {len(prediction['objects'])}")
